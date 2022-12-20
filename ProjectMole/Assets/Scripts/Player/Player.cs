@@ -12,15 +12,14 @@ public class Player : MonoBehaviour
     public float jumpForce;
     [SerializeField]
     public LayerMask groundLayerMask;
-
+    public Feet feet { get; private set; }
+    public PlayerInputHandler playerInputHandler { get; set; }
+    public Rigidbody rb { get; private set; }
+    public bool canJump { get; set; }
 
     private CapsuleCollider capsuleCollider;
     private PlayerBaseState currentState;
     private Vector2 currentMoveInput;
-
-    public Feet feet { get; private set; }
-    public PlayerInputHandler playerInputHandler { get; set; }
-    public Rigidbody rb { get; private set; }
 
     private void Awake()
     {
@@ -33,6 +32,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CanJump(); 
         ChangeState(new PlayerIdleState(this));
     }
 
@@ -52,4 +52,6 @@ public class Player : MonoBehaviour
         Debug.Log("Current state " + currentState);
         currentState.UpdateState();
     }
+
+    public void CanJump() => canJump = true;
 }

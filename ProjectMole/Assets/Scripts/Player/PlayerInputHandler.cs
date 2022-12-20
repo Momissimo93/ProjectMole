@@ -8,12 +8,17 @@ public class PlayerInputHandler : MonoBehaviour
 {
     [SerializeField]
     private PlayerInputActions playerInputActions;
+
+    private Player player;
+
     public Vector2 rawMovementInput { get; private set; }
     public int normalizedInput;
-    public bool jumpInput = false;
+    public bool canJump = true;
+    public bool isJumpPressed;
     void Start()
     {
         playerInputActions = new PlayerInputActions();
+        player = gameObject.GetComponent<Player>();
         playerInputActions.Enable();
 
         playerInputActions.Player.Move.started += ctx => OnMoveInput(ctx);
@@ -29,37 +34,37 @@ public class PlayerInputHandler : MonoBehaviour
     {
 
         rawMovementInput = context.ReadValue<Vector2>();
+
         normalizedInput = (int)(rawMovementInput * Vector2.right).normalized.x;
 
-        if (context.started)
-        {
+        //if (context.started)
+        //{
 
-            rawMovementInput = context.ReadValue<Vector2>();
-        }
-        else if (context.performed)
-        {
+        //    rawMovementInput = context.ReadValue<Vector2>();
+        //}
+        //else if (context.performed)
+        //{
 
-            rawMovementInput = context.ReadValue<Vector2>();
+        //    rawMovementInput = context.ReadValue<Vector2>();
 
-        }
-        else if (context.canceled)
-        {
-            rawMovementInput = context.ReadValue<Vector2>();
-        }
+        //}
+        //else if (context.canceled)
+        //{
+        //    rawMovementInput = context.ReadValue<Vector2>();
+        //}
     }
 
     public void OnJumpInput(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if(player.feet.isOnGround)
         {
-            Debug.Log("Jump");
-            jumpInput = true;
-        }
-        else if (context.canceled)
-        {
-            jumpInput = false;
+            if (context.started)
+            {
+                isJumpPressed = true;
+                canJump = false;
+            }
         }
     }
 
-    public void Isjumping() => jumpInput = false;
+    public void IsJumpPressed() => isJumpPressed = false;
 }

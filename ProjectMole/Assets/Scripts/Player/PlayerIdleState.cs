@@ -18,8 +18,9 @@ public class PlayerIdleState : PlayerBaseState
         {
             player.ChangeState(new PlayerMoveState(player));
         }
-        else if (player.feet.isOnGround && player.playerInputHandler.jumpInput)
+        else if (player.feet.isOnGround && player.playerInputHandler.isJumpPressed)
         {
+            player.playerInputHandler.IsJumpPressed();
             player.ChangeState(new PlayerJumpState(player));
         }
     }

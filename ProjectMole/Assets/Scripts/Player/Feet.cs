@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Feet : MonoBehaviour
 {
-    [SerializeField] Player player;
+    [SerializeField] 
+    Player player;
+    [SerializeField]
     public bool isOnGround { get; private set; }
     private void Awake()
     {
