@@ -9,7 +9,6 @@ public class PlayerIdleState : PlayerBaseState
     }
     public override void EnterState()
     {
-        Debug.Log("Entering IdleState");
         player.rb.velocity = Vector3.zero;
     }
     public override void UpdateState()

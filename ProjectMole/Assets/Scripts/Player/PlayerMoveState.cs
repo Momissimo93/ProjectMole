@@ -11,7 +11,7 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void EnterState()
     {
-        Debug.Log("Entering MoveState");
+
     }
 
     public override void UpdateState()

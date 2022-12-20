@@ -49,7 +49,6 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log("Current state " + currentState);
         currentState.UpdateState();
     }
 
