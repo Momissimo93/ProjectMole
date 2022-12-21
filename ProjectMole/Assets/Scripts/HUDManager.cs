@@ -19,4 +19,12 @@ public class HUDManager : MonoBehaviour
         timer = gameObject.GetComponent<Timer>();
     }
 
+    public void UpdateTimerUI(float m, float s)
+    {
+        float minutes = m;
+        float seconds = s;
+        string currentTime = string.Format("{00:00}:{1:00}", minutes, seconds);
+        timerText.text = currentTime;
+        Debug.Log(currentTime);
+    }
 }

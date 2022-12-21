@@ -28,7 +28,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void FixedUpdateState()
     {
-        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, 0, 0).normalized;
+        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, player.rb.velocity.y, 0).normalized;
         player.rb.velocity = appliedMovementInput * player.speed * Time.fixedDeltaTime;
     }
 }

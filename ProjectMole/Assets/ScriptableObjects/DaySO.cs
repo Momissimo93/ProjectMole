@@ -8,26 +8,10 @@ using UnityEngine;
 public class DaySO : ScriptableObject
 {
     [field: SerializeField]
-    public GameManger.Level dayName { get; set; }
-
-    [field: SerializeField]
-    public Holes[] holes;
-
-    [field: SerializeField]
-    public Beams [] beams;
+    public GameManger.DayNumber dayName { get; set; }
 
     [field: SerializeField]
     public float dayDuration { get; set; }
 
-}
-
-[Serializable]
-public class Holes
-{
-    public float timeInSeconds;
-}
-[Serializable]
-public class Beams
-{
-    public float timeInSeconds;
+    public Job[] jobs;
 }

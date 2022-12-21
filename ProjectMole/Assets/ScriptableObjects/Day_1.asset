@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Day_1
   m_EditorClassIdentifier: 
   <dayName>k__BackingField: 0
-  holes:
-  - timeInSeconds: 120
-  - timeInSeconds: 100
-  beams:
-  - timeInSeconds: 60
-  <dayDuration>k__BackingField: 10
+  <dayDuration>k__BackingField: 25
+  jobs:
+  - typeOfJobs: 1
+    timeInSeconds: 18
+  - typeOfJobs: 0
+    timeInSeconds: 12
+  - typeOfJobs: 0
+    timeInSeconds: 8
