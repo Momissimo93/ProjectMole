@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Day_1
   m_EditorClassIdentifier: 
   <dayName>k__BackingField: 0
-  <numberOfHoles>k__BackingField: 1
-  <numberOfBeams>k__BackingField: 1
-  <delta>k__BackingField: 90
-  <dayDuration>k__BackingField: 180
+  holes:
+  - timeInSeconds: 120
+  - timeInSeconds: 100
+  beams:
+  - timeInSeconds: 60
+  <dayDuration>k__BackingField: 10

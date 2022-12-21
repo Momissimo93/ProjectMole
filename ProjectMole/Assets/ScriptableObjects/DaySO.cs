@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,15 +11,23 @@ public class DaySO : ScriptableObject
     public GameManger.Level dayName { get; set; }
 
     [field: SerializeField]
-    public int numberOfHoles { get; set; }
+    public Holes[] holes;
 
     [field: SerializeField]
-    public int numberOfBeams { get; set; }
-
-    [field: SerializeField]
-    public float delta { get; set; }
+    public Beams [] beams;
 
     [field: SerializeField]
     public float dayDuration { get; set; }
 
+}
+
+[Serializable]
+public class Holes
+{
+    public float timeInSeconds;
+}
+[Serializable]
+public class Beams
+{
+    public float timeInSeconds;
 }

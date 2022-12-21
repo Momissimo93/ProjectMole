@@ -18,13 +18,14 @@ public class GameManger : MonoBehaviour
     private Dictionary<Level, Day> daysDictionary;
     [SerializeField]
     private Timer timer;
+    private List<Transform> currentBeams; //One by one 
+    [SerializeField]
+    private List<Transform> currentHoles; //One by one
 
     private GameState oldState;
     private GameState actualState;
     private int level;
     private float lightAmount; //you can loose before the end of the countdown if the light amout is biggern than.... 
-    private List<Transform> currentBeams; //One by one 
-    private List<Transform> currentHoles; //One by one
 
     public enum GameState { Intro, SetDifficulty, SetBeams, SetHoles, LevelSetUp, Play, EndLevel, GameOver }
     public enum Level { DayOne, DayTwo, DayThree, DayFour, DayFive, DaySix, DaySeven, DayEight, DayNine, DayTen }
@@ -102,13 +103,13 @@ public class GameManger : MonoBehaviour
                 if(daysDictionary.ContainsKey(Level.DayOne))
                 {
                     currentDay = daysDictionary[Level.DayOne];
-                    if (DebugMode) { Debug.Log("CurrentDay " + currentDay.dayName + " " +  currentDay.numberOfHoles + " " + currentDay.numberOfBeams + " " + currentDay.delta + " " + currentDay.dayDuration); }
+                    //if (DebugMode) { Debug.Log("CurrentDay " + currentDay.dayName + " " +  currentDay.numberOfHoles + " " + currentDay.numberOfBeams + " " + currentDay.delta + " " + currentDay.dayDuration); }
                 }
                 break;
             case 2:
-                if (daysDictionary.ContainsKey(Level.DayOne))
+                if (daysDictionary.ContainsKey(Level.DayTwo))
                 {
-                    currentDay = daysDictionary[Level.DayOne];
+                    currentDay = daysDictionary[Level.DayTwo];
                 }
                 break;
         } 
@@ -119,10 +120,10 @@ public class GameManger : MonoBehaviour
     {
         Randomizer.Shuffle(beams);
         currentBeams = new List<Transform>();
-        //for (int i = 0; i < numberOfBeams; i++)
-        //{
-        //    currentBeams.Add(beams[i]);
-        //}
+        for (int i = 0; i < currentDay.beams.Length; i++)
+        {
+            currentBeams.Add(beams[i]);
+        }
 
         UpdateGameState(GameState.SetHoles);
     }
@@ -130,32 +131,33 @@ public class GameManger : MonoBehaviour
     {
         Randomizer.Shuffle(holes);
         currentHoles = new List<Transform>();
-        //for (int i = 0; i < numberOfHoles; i++)
-        //{
-        //    currentHoles.Add(holes[i]);
-        //}
+        for (int i = 0; i < currentDay.holes.Length; i++)
+        {
+            currentHoles.Add(holes[i]);
+        }
         UpdateGameState(GameState.LevelSetUp);
     }
 
     void LevelSetUp()
     {
 
-        timer.SetTime(currentDay.dayDuration);
-        timer.StartCountDown();
+        HUDManager.instance.timer.SetTime(currentDay.dayDuration);
 
-        //UpdateGameState(GameState.Play);
+        UpdateGameState(GameState.Play);
     }
 
     void Play()
     {
         //Keep track of the timer, the holes 
-        UpdateGameState(GameState.EndLevel);
+        HUDManager.instance.timer.StartCountDown();
+        HUDManager.instance.timer.countDownFinish += UpdateGameState;
+        
     }
     void EndLevel()
     {
-        //Or SetDifficulty or GameOver()
-        //timer = 5;
-        level++;
+        HUDManager.instance.timer.countDownFinish -= UpdateGameState;
+        Debug.Log("End Level");
+        //level++;
     }
     void GameOver()
     {
@@ -169,18 +171,17 @@ public class GameManger : MonoBehaviour
         foreach (DaySO daySO in daySOs)
         {
             Day day = new Day();
-            day.dayName = daySO.dayName;
-            day.numberOfHoles = daySO.numberOfHoles;
-            day.numberOfBeams = daySO.numberOfBeams;
-            day.delta = daySO.delta;
-            day.dayDuration = daySO.dayDuration;
 
+            day.dayName = daySO.dayName;
+            day.holes = daySO.holes;
+            day.beams = daySO.beams;
+            day.dayDuration = daySO.dayDuration;
+            daysDictionary.Add(day.dayName, day);
+            
             if (DebugMode)
             {
                 Debug.Log($"{MethodBase.GetCurrentMethod().Name}: add {day.dayName} a {daysDictionary} ");
             }
-
-            daysDictionary.Add(day.dayName, day);
         }
     }
     void DeactivateMarkers()
@@ -212,9 +213,9 @@ public struct Day
     [SerializeField]
     public GameManger.Level dayName { get; set; }
     [SerializeField]
-    public int numberOfHoles { get; set; }
+    public Holes [] holes { get; set; }
     [SerializeField]
-    public int numberOfBeams { get; set; }
+    public Beams [] beams { get; set; }
     [SerializeField]
     public float delta { get; set; }
     [SerializeField]
