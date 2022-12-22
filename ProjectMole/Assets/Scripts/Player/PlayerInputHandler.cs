@@ -28,6 +28,14 @@ public class PlayerInputHandler : MonoBehaviour
         playerInputActions.Player.Jump.started += ctx => OnJumpInput(ctx);
         playerInputActions.Player.Jump.performed += ctx => OnJumpInput(ctx);
         playerInputActions.Player.Jump.canceled += ctx => OnJumpInput(ctx);
+
+        playerInputActions.Player.Attack.started += ctx => OnAttack(ctx);
+        playerInputActions.Player.Attack.performed += ctx => OnAttack(ctx);
+        playerInputActions.Player.Attack.canceled += ctx => OnAttack(ctx);
+
+        playerInputActions.Player.Repair.started += ctx => OnRepair(ctx);
+        playerInputActions.Player.Repair.performed += ctx => OnRepair(ctx);
+        playerInputActions.Player.Repair.canceled += ctx => OnRepair(ctx);
     }
 
     public void OnMoveInput(InputAction.CallbackContext context)
@@ -64,6 +72,17 @@ public class PlayerInputHandler : MonoBehaviour
                 canJump = false;
             }
         }
+    }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        player.Attack();
+
+    }
+
+    public void OnRepair(InputAction.CallbackContext context)
+    {
+        player.Repair();
     }
 
     public void IsJumpPressed() => isJumpPressed = false;

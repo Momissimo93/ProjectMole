@@ -32,7 +32,7 @@ public class PlayerFallingState : PlayerBaseState
     {
         if (player.playerInputHandler.normalizedInput != 0)
         {
-            player.rb.velocity = new Vector2(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
+            player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
         }
     }
     public override void ExitState()

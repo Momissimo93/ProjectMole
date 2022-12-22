@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerMoveState : PlayerBaseState
 {
@@ -13,9 +14,12 @@ public class PlayerMoveState : PlayerBaseState
     {
 
     }
-
     public override void UpdateState()
     {
+
+        //player.transform.Translate(player.playerInputHandler.rawMovementInput * Time.deltaTime * player.speed); 1)
+        //player.rb.velocity = player.playerInputHandler.rawMovementInput * player.speed; //2)
+
         if (player.playerInputHandler.normalizedInput == 0)
         {
             player.ChangeState(new PlayerIdleState(player));
@@ -25,10 +29,14 @@ public class PlayerMoveState : PlayerBaseState
             player.playerInputHandler.IsJumpPressed();
             player.ChangeState(new PlayerJumpState(player));
         }
+        else if (!player.feet.isOnGround)
+        {
+            player.ChangeState(new PlayerFallingState(player));
+        }
     }
     public override void FixedUpdateState()
     {
-        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, player.rb.velocity.y, 0).normalized;
+        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, 0).normalized; 
         player.rb.velocity = appliedMovementInput * player.speed * Time.fixedDeltaTime;
     }
 }

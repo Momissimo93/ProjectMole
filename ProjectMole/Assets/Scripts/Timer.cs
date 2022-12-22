@@ -6,14 +6,25 @@ using static GameManger;
 
 public class Timer : MonoBehaviour
 {
-    float timer;
-    float waves;
-    float breath;
-    bool startCountDown;
-    Queue <Job> jobsQueue;
+
+    [SerializeField] bool debugMode;
+
+    private float timer;
+    private float waves;
+    private float breath;
+    private bool startCountDown;
+    private Queue<Job> jobsQueue;
 
     public delegate void CountDownFinishd(GameManger.GameState gameState);
     public CountDownFinishd countDownFinish;
+
+    public static Timer instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -24,14 +35,17 @@ public class Timer : MonoBehaviour
 
                 if(jobsQueue.Count > 0 && jobsQueue.Peek().timeInSeconds == Mathf.Floor(timer))
                 {
-                    Debug.Log("Fire jobs at " + jobsQueue.Peek().timeInSeconds);
-                    if (jobsQueue.Peek().eventPosition.GetComponent<Marker>())
+                    if(debugMode)
                     {
-                        IMarkable c;
-                        jobsQueue.Peek().eventPosition.TryGetComponent<IMarkable>(out c);
-                        c.ActivateMarker();
+                        Debug.Log("Fire jobs at " + jobsQueue.Peek().timeInSeconds);
                     }
-                    jobsQueue.Dequeue();
+                    //if (jobsQueue.Peek().eventPosition.GetComponent<Marker>())
+                    //{
+                    //    IMarkable c;
+                    //    jobsQueue.Peek().eventPosition.TryGetComponent<IMarkable>(out c);
+                    //    c.ActivateMarker();
+                    //}
+                    GameManger.instance.NewJob(jobsQueue.Dequeue());
                 }
 
                 timer -= Time.deltaTime;

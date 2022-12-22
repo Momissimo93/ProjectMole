@@ -16,10 +16,19 @@ public class Player : MonoBehaviour
     public PlayerInputHandler playerInputHandler { get; set; }
     public Rigidbody rb { get; private set; }
     public bool canJump { get; set; }
+    public bool canAttack { get; set; }
+    public bool canRepair { get; set; }
+
+    [SerializeField]
+    private float attackRadius;
+    [SerializeField]
+    private LayerMask targetLayer;
 
     private CapsuleCollider capsuleCollider;
     private PlayerBaseState currentState;
     private Vector2 currentMoveInput;
+    private bool drawAttackingSphere;
+    private IEnumerator actionCoroutine;
 
     private void Awake()
     {
@@ -32,6 +41,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canAttack = true;
         CanJump(); 
         ChangeState(new PlayerIdleState(this));
     }
@@ -52,5 +62,76 @@ public class Player : MonoBehaviour
         currentState.UpdateState();
     }
 
+    public void Attack()
+    {
+        if(canAttack)
+        {
+            canAttack = false;
+            canRepair = false;
+            Debug.Log("Attack");
+            actionCoroutine = AttackCoroutine(1f);
+            StartCoroutine(actionCoroutine);
+        }
+    }
+    public void Repair()
+    {
+        if (canRepair)
+        {
+            canAttack = false;
+            canRepair = false;
+            Debug.Log("Repair");
+            actionCoroutine = RepairCoroutine(1f);
+            StartCoroutine(actionCoroutine);
+        }
+    }
+
+    private IEnumerator AttackCoroutine(float s)
+    {
+        drawAttackingSphere = true;
+
+        Collider[] colliders;
+        colliders = Physics.OverlapSphere(transform.position, attackRadius, targetLayer);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].TryGetComponent(out IDamagable d))
+            {
+                d.GetDamage();
+            }
+        }
+
+        yield return new WaitForSeconds(s);
+
+        drawAttackingSphere = false;
+        canAttack = true;
+        canRepair = true;
+    }
+    private IEnumerator RepairCoroutine(float s)
+    {
+        drawAttackingSphere = true;
+
+        Collider[] colliders;
+        colliders = Physics.OverlapSphere(transform.position, attackRadius, targetLayer);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].TryGetComponent(out IFixable d))
+            {
+                d.Fix();
+            }
+        }
+
+        yield return new WaitForSeconds(s);
+
+        drawAttackingSphere = false;
+        canAttack = true;
+        canRepair = true;
+    }
+
     public void CanJump() => canJump = true;
+    private void OnDrawGizmos()
+    {
+        if(drawAttackingSphere)
+        {
+            Gizmos.DrawWireSphere(transform.position, attackRadius);
+        }
+    }
 }

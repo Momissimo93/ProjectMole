@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static GameManger;
 
 public class GameManger : MonoBehaviour
 {
     [SerializeField]
     private bool DebugMode;
-    [SerializeField]
-    private Transform[] beams;
+    //private Transform[] beams;
     [SerializeField]
     private Transform[] holes;
     [SerializeField]
@@ -22,6 +22,12 @@ public class GameManger : MonoBehaviour
     private List<Transform> currentBeams; //One by one 
     [SerializeField]
     private List<Transform> currentHoles; //One by one
+
+    [SerializeField]
+    private RoomsManager[] rooms;
+    [SerializeField]
+    private Beam[] beams;
+
 
     private GameState oldState;
     private GameState actualState;
@@ -93,19 +99,34 @@ public class GameManger : MonoBehaviour
     }
     void SetDifficulty()
     {
-        switch(level)
+        if (DebugMode)
+        {
+            Debug.Log("CurrentDay " + level);
+        }
+        switch (level)
         {
             case 1:
-                if(daysDictionary.ContainsKey(DayNumber.DayOne))
+                if (daysDictionary.ContainsKey(DayNumber.DayOne))
                 {
                     currentDay = daysDictionary[DayNumber.DayOne];
-                    //if (DebugMode) { Debug.Log("CurrentDay " + currentDay.dayName + " " +  currentDay.numberOfHoles + " " + currentDay.numberOfBeams + " " + currentDay.delta + " " + currentDay.dayDuration); }
                 }
                 break;
             case 2:
                 if (daysDictionary.ContainsKey(DayNumber.DayTwo))
                 {
                     currentDay = daysDictionary[DayNumber.DayTwo];
+                }
+                break;
+            case 3:
+                if (daysDictionary.ContainsKey(DayNumber.DayThree))
+                {
+                    currentDay = daysDictionary[DayNumber.DayThree];
+                }
+                break;
+            case 4:
+                if (daysDictionary.ContainsKey(DayNumber.DayFour))
+                {
+                    currentDay = daysDictionary[DayNumber.DayFour];
                 }
                 break;
         } 
@@ -137,39 +158,26 @@ public class GameManger : MonoBehaviour
 
     void LevelSetUp()
     {
-        Randomizer.Shuffle(beams);
-        Randomizer.Shuffle(holes);
-        int beamIndex = 0;
-        int beamholes = 0;
+        //Randomizer.Shuffle(beams);
+        //Randomizer.Shuffle(holes);
+        //int beamIndex = 0;
+        //int beamholes = 0;
 
-        for (int i = 0; i < currentDay.jobs.Length; i++)
-        {
-            if(currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingBeam)
-            {
-                currentDay.jobs[i].eventPosition = beams[i];
-                //if (currentDay.jobs[i].eventPosition.GetComponent<Marker>())
-                //{
-                //    IMarkable c;
-                //    currentDay.jobs[i].eventPosition.TryGetComponent<IMarkable>(out c);
-                //    c.ActivateMarker();
-                //}
-                beamIndex++;
-            }
-            else if (currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingHole)
-            {
-                currentDay.jobs[i].eventPosition = holes[i];
-                //if (currentDay.jobs[i].eventPosition.GetComponent<Marker>())
-                //{
-                //    IMarkable c;
-                //    currentDay.jobs[i].eventPosition.TryGetComponent<IMarkable>(out c);
-                //    c.ActivateMarker();
-                //}
-                beamholes++;
-            }
-        }
+        //for (int i = 0; i < currentDay.jobs.Length; i++)
+        //{
+        //    if(currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingBeam)
+        //    {
+        //        currentDay.jobs[i].eventPosition = beams[i];
+        //        beamIndex++;
+        //    }
+        //    else if (currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingHole)
+        //    {
+        //        currentDay.jobs[i].eventPosition = holes[i];
+        //        beamholes++;
+        //    }
+        //}
 
-        HUDManager.instance.timer.SetTimer(currentDay.dayDuration, currentDay.jobs);
-
+        Timer.instance.SetTimer(currentDay.dayDuration, currentDay.jobs);
 
         UpdateGameState(GameState.Play);
     }
@@ -177,19 +185,103 @@ public class GameManger : MonoBehaviour
     void Play()
     {
         //Keep track of the timer, the holes 
-        HUDManager.instance.timer.StartCountDown();
-        HUDManager.instance.timer.countDownFinish += UpdateGameState;
+        Timer.instance.StartCountDown();
+        Timer.instance.countDownFinish += UpdateGameState;
         
     }
     void EndLevel()
     {
-        HUDManager.instance.timer.countDownFinish -= UpdateGameState;
-        Debug.Log("End Level");
-        //level++;
+        Timer.instance.countDownFinish -= UpdateGameState;
+
+        for(int i = 0; i < beams.Length; i ++)
+        {
+            if(beams[i].IsAnActiveHole() == true)
+            {
+                Debug.Log("GameOver");
+            }
+        }
+        for(int i = 0; i < rooms.Length; i ++ )
+        {
+            if (rooms[i].IsThereAnHoleInThisRoom() == true)
+            {
+                Debug.Log("GameOver");
+            }
+        }
+        Debug.Log("Next Level");
+
+        Reset();
+        level++;
+        UpdateGameState(GameState.SetDifficulty);
     }
     void GameOver()
     {
+        Reset();
         //Back To first Scene
+    }
+
+    public void NewJob(Job job)
+    {
+        switch(job.typeOfJobs)
+        {
+            case TypeOfJobs.FixingBeam:
+                DestroyBeam();
+                break;
+            case TypeOfJobs.FixingHole:
+                GenerateHole();
+                break;
+        }
+    }
+
+    public void DestroyBeam()
+    {
+        Randomizer.Shuffle(beams);
+        for (int i = 0; i < beams.Length; i++)
+        {
+            if (!beams[i].IsAnActiveHole())
+            {
+                beams[i].Break();
+                beams[i].isAnActiveHole = true;
+                return;
+            }
+        }
+    }
+
+    public void GenerateHole()
+    {
+        Randomizer.Shuffle(rooms);
+
+        if (!rooms[0].IsThereAnHoleInThisRoom())
+        {
+            if(DebugMode)
+            {
+                Debug.Log("First try: There is no hole in this room " + rooms[0].transform.name);
+            }
+            rooms[0].GenerateHole();
+        }
+        else if (!rooms[1].IsThereAnHoleInThisRoom())
+        {
+            if (DebugMode)
+            {
+                Debug.Log("Second try: There is no hole in this room " + rooms[1].transform.name);
+            }
+            rooms[1].GenerateHole();
+        }
+        else if (!rooms[2].IsThereAnHoleInThisRoom())
+        {
+            if (DebugMode)
+            {
+                Debug.Log("Third try: There is no hole in this room " + rooms[2].transform.name);
+            }
+            rooms[2].GenerateHole();
+        }
+        else
+        {
+            if (DebugMode)
+            {
+                Debug.Log("Forth try: all rooms have an holes ");
+            }
+            //rooms[0].GenerateHole();
+        }
     }
 
     void CreateDaysDictionary()
@@ -230,6 +322,17 @@ public class GameManger : MonoBehaviour
                 beams[i].TryGetComponent<IMarkable>(out c);
                 c.DeactivateMarker();
             }
+        }
+    }
+    void Reset()
+    {
+        for(int i = 0; i < rooms.Length; i ++)
+        {
+            rooms[i].Reset();
+        }
+        for(int i = 0; i < beams.Length; i ++)
+        {
+            beams[i].Reset();
         }
     }
 }

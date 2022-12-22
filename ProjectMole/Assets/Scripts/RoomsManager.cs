@@ -17,6 +17,8 @@ public class RoomsManager : MonoBehaviour
         room.SetActive(false);
         int i = Random.Range(0,holes.Length);
         holes[i].gameObject.SetActive(true);
+        holes[i].isAnActiveHole = true;
+        holes[i].holeFixed += Reset;
     }
 
     public void Reset()
@@ -24,7 +26,21 @@ public class RoomsManager : MonoBehaviour
         room.gameObject.SetActive(true);
         for(int i = 0; i < holes.Length; i++)
         {
+            holes[i].ManualEnemyCleaning();
+            holes[i].isAnActiveHole = false;
             holes[i].gameObject.SetActive(false);
+            holes[i].holeFixed -= Reset;
         }
+    }
+    public bool IsThereAnHoleInThisRoom()
+    {
+        for(int i = 0; i < holes.Length; i++)
+        {
+            if (holes[i].IsAnActiveHole())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

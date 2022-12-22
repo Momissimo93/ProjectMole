@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Day_1
   m_EditorClassIdentifier: 
   <dayName>k__BackingField: 0
-  <dayDuration>k__BackingField: 25
+  <dayDuration>k__BackingField: 5
   jobs:
   - typeOfJobs: 1
-    timeInSeconds: 18
+    timeInSeconds: 3
   - typeOfJobs: 0
-    timeInSeconds: 12
-  - typeOfJobs: 0
-    timeInSeconds: 8
+    timeInSeconds: 2
