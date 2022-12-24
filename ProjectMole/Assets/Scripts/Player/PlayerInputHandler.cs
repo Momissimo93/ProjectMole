@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,15 +35,27 @@ public class PlayerInputHandler : MonoBehaviour
         playerInputActions.Player.Repair.started += ctx => OnRepair(ctx);
         playerInputActions.Player.Repair.performed += ctx => OnRepair(ctx);
         playerInputActions.Player.Repair.canceled += ctx => OnRepair(ctx);
+
+        playerInputActions.Player.Pause.started += ctx => OnPause(ctx);
     }
 
     public void OnMoveInput(InputAction.CallbackContext context)
     {
 
         rawMovementInput = context.ReadValue<Vector2>();
+        player.animator.SetFloat("speed", rawMovementInput.magnitude);
 
         normalizedInput = (int)(rawMovementInput * Vector2.right).normalized.x;
 
+
+        if(rawMovementInput.x < 0 && player.facingRight)
+        {
+            flip();
+        }
+        else if(rawMovementInput.x > 0 && !player.facingRight)
+        {
+            flip();
+        }
         //if (context.started)
         //{
 
@@ -85,5 +96,15 @@ public class PlayerInputHandler : MonoBehaviour
         player.Repair();
     }
 
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        CanvasMnager.instance.PauseGame();
+    }
+
+    public void flip()
+    {
+        player.facingRight = !player.facingRight;
+        player.transform.Rotate(0f, 180f, 0f);
+    }
     public void IsJumpPressed() => isJumpPressed = false;
 }

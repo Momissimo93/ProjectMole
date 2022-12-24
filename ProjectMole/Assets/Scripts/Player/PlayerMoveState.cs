@@ -1,17 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerMoveState : PlayerBaseState
 {
     public PlayerMoveState(Player player) : base(player)
     {
-
     }
 
     public override void EnterState()
     {
+        //player.animator.SetBool("landing", false); 
 
     }
     public override void UpdateState()
@@ -36,7 +35,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void FixedUpdateState()
     {
-        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, 0).normalized; 
+        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, player.rb.velocity.y).normalized; 
         player.rb.velocity = appliedMovementInput * player.speed * Time.fixedDeltaTime;
     }
 }

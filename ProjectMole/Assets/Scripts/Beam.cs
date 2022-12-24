@@ -19,13 +19,17 @@ public class Beam : MonoBehaviour, IFixable
     public void Break()
     {
         sphereCollider.enabled = true;
+        isAnActiveHole = true;
         animator.SetTrigger("Break");
     }
     public void Reset()
     {
-        sphereCollider.enabled = false;
-        animator.SetTrigger("Fix");
-        isAnActiveHole = false;
+        if (isAnActiveHole)
+        {
+            sphereCollider.enabled = false;
+            animator.SetTrigger("Fix");
+            isAnActiveHole = false;
+        }
     }
     public bool IsAnActiveHole() => isAnActiveHole;
 }

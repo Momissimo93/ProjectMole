@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public float jumpForce;
     [SerializeField]
     public LayerMask groundLayerMask;
+    [SerializeField]
+    public Animator animator;
     public Feet feet { get; private set; }
     public PlayerInputHandler playerInputHandler { get; set; }
     public Rigidbody rb { get; private set; }
@@ -29,6 +31,8 @@ public class Player : MonoBehaviour
     private Vector2 currentMoveInput;
     private bool drawAttackingSphere;
     private IEnumerator actionCoroutine;
+
+    public bool facingRight = true;
 
     private void Awake()
     {
@@ -66,6 +70,10 @@ public class Player : MonoBehaviour
     {
         if(canAttack)
         {
+            if (animator != null)
+            {
+                animator.SetTrigger("attack");
+            }
             canAttack = false;
             canRepair = false;
             Debug.Log("Attack");
@@ -77,6 +85,10 @@ public class Player : MonoBehaviour
     {
         if (canRepair)
         {
+            if (animator != null)
+            {
+                animator.SetTrigger("repair");
+            }
             canAttack = false;
             canRepair = false;
             Debug.Log("Repair");

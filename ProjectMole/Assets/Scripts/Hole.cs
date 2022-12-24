@@ -55,17 +55,18 @@ public class Hole : MonoBehaviour, IFixable
 
     void SpawnEnemy()
     {
+        int r = Random.Range(0, enemies.Length);
         switch(typeOfPosition)
         {
             case TypeOfPosition.Left:
-                enemy = Instantiate(enemies[0].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
+                enemy = Instantiate(enemies[r].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
                 enemy.GetComponent<SpriteRenderer>().flipY = true;
                 break;
             case TypeOfPosition.Right:
-                enemy = Instantiate(enemies[0].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
+                enemy = Instantiate(enemies[r].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
                 break;
             case TypeOfPosition.Center:
-                enemy  = Instantiate(enemies[0].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
+                enemy  = Instantiate(enemies[r].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
                 break;
         }
         enemy.GetComponent<Enemy>().enemyDelegate += OnEnemeyDestroyed;

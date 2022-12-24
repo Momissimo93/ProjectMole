@@ -10,6 +10,7 @@ public class PlayerIdleState : PlayerBaseState
     public override void EnterState()
     {
         player.rb.velocity = Vector3.zero;
+        //player.animator.SetBool("landing", false);
     }
     public override void UpdateState()
     {

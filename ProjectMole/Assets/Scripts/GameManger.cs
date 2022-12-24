@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using static GameManger;
 
 public class GameManger : MonoBehaviour
@@ -60,7 +61,7 @@ public class GameManger : MonoBehaviour
         
     }
 
-    void UpdateGameState(GameState newState)
+    public void UpdateGameState(GameState newState)
     {
         oldState = actualState;
         actualState = newState;
@@ -193,30 +194,40 @@ public class GameManger : MonoBehaviour
     {
         Timer.instance.countDownFinish -= UpdateGameState;
 
+        bool isJobDone = true;
+
         for(int i = 0; i < beams.Length; i ++)
         {
             if(beams[i].IsAnActiveHole() == true)
             {
-                Debug.Log("GameOver");
+                isJobDone = false;
             }
         }
         for(int i = 0; i < rooms.Length; i ++ )
         {
             if (rooms[i].IsThereAnHoleInThisRoom() == true)
             {
-                Debug.Log("GameOver");
+                isJobDone = false;
             }
         }
-        Debug.Log("Next Level");
 
-        Reset();
-        level++;
-        UpdateGameState(GameState.SetDifficulty);
+        if(isJobDone)
+        {
+            Reset();
+            level++;
+            Debug.LogFormat("next day");
+            CanvasMnager.instance.JobDone();
+        }
+        else
+        {
+            Reset();
+            UpdateGameState(GameState.GameOver);
+        }
     }
     void GameOver()
     {
-        Reset();
-        //Back To first Scene
+        Debug.LogFormat("GameOver");
+        CanvasMnager.instance.GameOver();
     }
 
     public void NewJob(Job job)
@@ -240,7 +251,6 @@ public class GameManger : MonoBehaviour
             if (!beams[i].IsAnActiveHole())
             {
                 beams[i].Break();
-                beams[i].isAnActiveHole = true;
                 return;
             }
         }
