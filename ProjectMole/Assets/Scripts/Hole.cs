@@ -6,9 +6,9 @@ using static Enemy;
 public class Hole : MonoBehaviour, IFixable
 {
     private enum TypeOfPosition { Left, Right, Center };
-    [SerializeField] 
-    TypeOfPosition typeOfPosition;
 
+    [SerializeField] 
+    private TypeOfPosition typeOfPosition;
     [SerializeField] 
     private Enemy [] enemies;
     [SerializeField] 
@@ -69,18 +69,23 @@ public class Hole : MonoBehaviour, IFixable
                 enemy  = Instantiate(enemies[r].gameObject, spawnPosition.transform.position, Quaternion.Euler(0, 0, 90));
                 break;
         }
-        enemy.GetComponent<Enemy>().enemyDelegate += OnEnemeyDestroyed;
+        enemy.GetComponent<Enemy>().enemyDestroyDelegate += OnDestroyEnemy;
+        enemy.GetComponent<Enemy>().holeCanBeFixed += OnHoleCanBeFixed;
     }
 
-    void OnEnemeyDestroyed()
+    void OnHoleCanBeFixed()
     {
-        enemy.GetComponent<Enemy>().enemyDelegate -= OnEnemeyDestroyed;
-        Destroy(enemy);
+        enemy.GetComponent<Enemy>().holeCanBeFixed -= OnHoleCanBeFixed;
         canBeFixed = true;
+    }
+
+    void OnDestroyEnemy()
+    {
+        enemy.GetComponent<Enemy>().enemyDestroyDelegate -= OnDestroyEnemy;
+        Destroy(enemy);
     }
     public void Fix()
     {
-        Debug.Log("Fix");
         if (canBeFixed)
         {
             holeFixed?.Invoke();

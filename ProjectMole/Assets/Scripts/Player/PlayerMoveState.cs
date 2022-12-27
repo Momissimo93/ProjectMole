@@ -15,10 +15,6 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void UpdateState()
     {
-
-        //player.transform.Translate(player.playerInputHandler.rawMovementInput * Time.deltaTime * player.speed); 1)
-        //player.rb.velocity = player.playerInputHandler.rawMovementInput * player.speed; //2)
-
         if (player.playerInputHandler.normalizedInput == 0)
         {
             player.ChangeState(new PlayerIdleState(player));
@@ -35,7 +31,6 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void FixedUpdateState()
     {
-        Vector3 appliedMovementInput = new Vector3(player.playerInputHandler.normalizedInput, player.rb.velocity.y).normalized; 
-        player.rb.velocity = appliedMovementInput * player.speed * Time.fixedDeltaTime;
+        player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.deltaTime, player.rb.velocity.y);
     }
 }

@@ -75,20 +75,28 @@ public class PlayerInputHandler : MonoBehaviour
 
     public void OnJumpInput(InputAction.CallbackContext context)
     {
-        if(player.feet.isOnGround)
+        //if(player.feet.isOnGround)
+        //{
+        //    if (context.started)
+        //    {
+        //        isJumpPressed = true;
+        //        canJump = false;
+        //    }
+        //}
+
+        if(context.started)
         {
-            if (context.started)
-            {
-                isJumpPressed = true;
-                canJump = false;
-            }
+            isJumpPressed = true;
+        }
+        else if (context.canceled)
+        {
+            isJumpPressed = false;
         }
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
         player.Attack();
-
     }
 
     public void OnRepair(InputAction.CallbackContext context)

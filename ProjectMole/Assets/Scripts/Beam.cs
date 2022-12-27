@@ -10,6 +10,7 @@ public class Beam : MonoBehaviour, IFixable
     Animator animator;
     [SerializeField]
     Collider sphereCollider;
+
     public void Fix()
     {
         animator.SetTrigger("Fix");

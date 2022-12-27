@@ -14,12 +14,21 @@ public class Player : MonoBehaviour
     public LayerMask groundLayerMask;
     [SerializeField]
     public Animator animator;
+    [SerializeField]
+    public float jumpMultiplier;
+    [SerializeField] 
+    public float fallMultiplier;
+    [SerializeField]
+    public Transform attackPoint;
     public Feet feet { get; private set; }
     public PlayerInputHandler playerInputHandler { get; set; }
     public Rigidbody rb { get; private set; }
     public bool canJump { get; set; }
     public bool canAttack { get; set; }
     public bool canRepair { get; set; }
+    public Vector3 vectorGravity { get; private set; }
+
+    public bool facingRight = true;
 
     [SerializeField]
     private float attackRadius;
@@ -32,7 +41,8 @@ public class Player : MonoBehaviour
     private bool drawAttackingSphere;
     private IEnumerator actionCoroutine;
 
-    public bool facingRight = true;
+    public delegate void AttackDelegate();
+    public AttackDelegate attackDelegate;
 
     private void Awake()
     {
@@ -45,7 +55,9 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        vectorGravity = new Vector3(0, -Physics.gravity.y, 0);
         canAttack = true;
+        canRepair = true;
         CanJump(); 
         ChangeState(new PlayerIdleState(this));
     }
@@ -64,6 +76,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         currentState.UpdateState();
+        attackDelegate?.Invoke();
     }
 
     public void Attack()
@@ -76,11 +89,39 @@ public class Player : MonoBehaviour
             }
             canAttack = false;
             canRepair = false;
-            Debug.Log("Attack");
-            actionCoroutine = AttackCoroutine(1f);
-            StartCoroutine(actionCoroutine);
         }
     }
+    public void OnAttackAnimationEvent()
+    {
+       
+        attackDelegate += TryInflictDamage;
+
+        drawAttackingSphere = true;
+    }
+    public void OffAttackAnimationEvent()
+    {
+        attackDelegate -= TryInflictDamage;
+
+        drawAttackingSphere = false;
+        canAttack = true;
+        canRepair = true;
+    }
+
+    private void TryInflictDamage()
+    {
+        drawAttackingSphere = true;
+
+        Collider[] colliders;
+        colliders = Physics.OverlapSphere(attackPoint.position, attackRadius, targetLayer);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].TryGetComponent(out IDamagable d))
+            {
+                d.GetDamage();
+            }
+        }
+    }
+
     public void Repair()
     {
         if (canRepair)
@@ -95,27 +136,6 @@ public class Player : MonoBehaviour
             actionCoroutine = RepairCoroutine(1f);
             StartCoroutine(actionCoroutine);
         }
-    }
-
-    private IEnumerator AttackCoroutine(float s)
-    {
-        drawAttackingSphere = true;
-
-        Collider[] colliders;
-        colliders = Physics.OverlapSphere(transform.position, attackRadius, targetLayer);
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            if (colliders[i].TryGetComponent(out IDamagable d))
-            {
-                d.GetDamage();
-            }
-        }
-
-        yield return new WaitForSeconds(s);
-
-        drawAttackingSphere = false;
-        canAttack = true;
-        canRepair = true;
     }
     private IEnumerator RepairCoroutine(float s)
     {
@@ -143,7 +163,7 @@ public class Player : MonoBehaviour
     {
         if(drawAttackingSphere)
         {
-            Gizmos.DrawWireSphere(transform.position, attackRadius);
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
     }
 }

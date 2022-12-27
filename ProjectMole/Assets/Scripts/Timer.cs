@@ -39,12 +39,6 @@ public class Timer : MonoBehaviour
                     {
                         Debug.Log("Fire jobs at " + jobsQueue.Peek().timeInSeconds);
                     }
-                    //if (jobsQueue.Peek().eventPosition.GetComponent<Marker>())
-                    //{
-                    //    IMarkable c;
-                    //    jobsQueue.Peek().eventPosition.TryGetComponent<IMarkable>(out c);
-                    //    c.ActivateMarker();
-                    //}
                     GameManger.instance.NewJob(jobsQueue.Dequeue());
                 }
 

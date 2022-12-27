@@ -13,22 +13,15 @@ public class GameManger : MonoBehaviour
     private bool DebugMode;
     //private Transform[] beams;
     [SerializeField]
-    private Transform[] holes;
-    [SerializeField]
     private List <DaySO> daySOs;
     [SerializeField]
     private Dictionary<DayNumber, Day> daysDictionary;
     [SerializeField]
     private Timer timer;
-    private List<Transform> currentBeams; //One by one 
-    [SerializeField]
-    private List<Transform> currentHoles; //One by one
-
     [SerializeField]
     private RoomsManager[] rooms;
     [SerializeField]
     private Beam[] beams;
-
 
     private GameState oldState;
     private GameState actualState;
@@ -135,49 +128,8 @@ public class GameManger : MonoBehaviour
         UpdateGameState(GameState.LevelSetUp);
     }
 
-    //void SetBeams()
-    //{
-    //    Randomizer.Shuffle(beams);
-    //    //currentBeams = new List<Transform>();
-    //    for (int i = 0; i < currentDay.beams.Length; i++)
-    //    {
-    //        currentDay.beams[i].beamPosition = beams[i];
-    //    }
-
-    //    UpdateGameState(GameState.SetHoles);
-    //}
-    //void SetHoles()
-    //{
-    //    Randomizer.Shuffle(holes);
-    //    //currentHoles = new List<Transform>();
-    //    for (int i = 0; i < currentDay.holes.Length; i++)
-    //    {
-    //        currentDay.holes[i].holePosition = holes[i];
-    //    }
-    //    UpdateGameState(GameState.LevelSetUp);
-    //}
-
     void LevelSetUp()
     {
-        //Randomizer.Shuffle(beams);
-        //Randomizer.Shuffle(holes);
-        //int beamIndex = 0;
-        //int beamholes = 0;
-
-        //for (int i = 0; i < currentDay.jobs.Length; i++)
-        //{
-        //    if(currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingBeam)
-        //    {
-        //        currentDay.jobs[i].eventPosition = beams[i];
-        //        beamIndex++;
-        //    }
-        //    else if (currentDay.jobs[i].typeOfJobs == TypeOfJobs.FixingHole)
-        //    {
-        //        currentDay.jobs[i].eventPosition = holes[i];
-        //        beamholes++;
-        //    }
-        //}
-
         Timer.instance.SetTimer(currentDay.dayDuration, currentDay.jobs);
 
         UpdateGameState(GameState.Play);
@@ -194,24 +146,7 @@ public class GameManger : MonoBehaviour
     {
         Timer.instance.countDownFinish -= UpdateGameState;
 
-        bool isJobDone = true;
-
-        for(int i = 0; i < beams.Length; i ++)
-        {
-            if(beams[i].IsAnActiveHole() == true)
-            {
-                isJobDone = false;
-            }
-        }
-        for(int i = 0; i < rooms.Length; i ++ )
-        {
-            if (rooms[i].IsThereAnHoleInThisRoom() == true)
-            {
-                isJobDone = false;
-            }
-        }
-
-        if(isJobDone)
+        if(IsJobDone(rooms, beams))
         {
             Reset();
             level++;
@@ -251,6 +186,7 @@ public class GameManger : MonoBehaviour
             if (!beams[i].IsAnActiveHole())
             {
                 beams[i].Break();
+                ActivateMarker(beams[i].gameObject);
                 return;
             }
         }
@@ -267,6 +203,7 @@ public class GameManger : MonoBehaviour
                 Debug.Log("First try: There is no hole in this room " + rooms[0].transform.name);
             }
             rooms[0].GenerateHole();
+            ActivateMarker(rooms[0].gameObject);
         }
         else if (!rooms[1].IsThereAnHoleInThisRoom())
         {
@@ -275,6 +212,7 @@ public class GameManger : MonoBehaviour
                 Debug.Log("Second try: There is no hole in this room " + rooms[1].transform.name);
             }
             rooms[1].GenerateHole();
+            ActivateMarker(rooms[0].gameObject);
         }
         else if (!rooms[2].IsThereAnHoleInThisRoom())
         {
@@ -283,6 +221,7 @@ public class GameManger : MonoBehaviour
                 Debug.Log("Third try: There is no hole in this room " + rooms[2].transform.name);
             }
             rooms[2].GenerateHole();
+            ActivateMarker(rooms[0].gameObject);
         }
         else
         {
@@ -315,12 +254,12 @@ public class GameManger : MonoBehaviour
     }
     void DeactivateMarkers()
     {
-        for(int i = 0; i < holes.Length; i++)
+        for (int i = 0; i < rooms.Length; i++)
         {
-            if (holes[i].GetComponent<Marker>())
+            if (rooms[i].GetComponent<Marker>())
             {
                 IMarkable c;
-                holes[i].TryGetComponent<IMarkable>(out c);
+                rooms[i].TryGetComponent<IMarkable>(out c);
                 c.DeactivateMarker();
             }
         }
@@ -332,6 +271,35 @@ public class GameManger : MonoBehaviour
                 beams[i].TryGetComponent<IMarkable>(out c);
                 c.DeactivateMarker();
             }
+        }
+    }
+
+    bool IsJobDone(RoomsManager [] rooms, Beam[] beams)
+    {
+        for (int i = 0; i < beams.Length; i++)
+        {
+            if (beams[i].IsAnActiveHole() == true)
+            {
+                return false;
+            }
+        }
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            if (rooms[i].IsThereAnHoleInThisRoom() == true)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void ActivateMarker(GameObject g)
+    {
+        if (g.GetComponent<Marker>())
+        {
+            IMarkable c;
+            g.TryGetComponent<IMarkable>(out c);
+            c.ActivateMarker();
         }
     }
     void Reset()
@@ -355,11 +323,6 @@ public struct Day
 
     [SerializeField]
     public Job [] jobs;
-    //[SerializeField]
-    //public Holes [] holes { get; set; }
-
-    //[SerializeField]
-    //public Beams [] beams { get; set; }
 
     [SerializeField]
     public float delta { get; set; }
@@ -394,12 +357,3 @@ public class Job
     [HideInInspector]
     public Transform eventPosition { get; set; }
 }
-
-//[Serializable]
-//public class Beams
-//{
-//    public float timeInSeconds;
-
-//    [HideInInspector]
-//    public Transform beamPosition { get; set; }
-//}

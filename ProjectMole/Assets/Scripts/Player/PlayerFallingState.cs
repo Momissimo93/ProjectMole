@@ -38,14 +38,13 @@ public class PlayerFallingState : PlayerBaseState
     }
     public override void FixedUpdateState()
     {
+        player.rb.velocity -= player.vectorGravity * player.fallMultiplier * Time.deltaTime;
         HandleMoveInput();
     }
     private void HandleMoveInput()
     {
-        if (player.playerInputHandler.normalizedInput != 0)
-        {
-            player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
-        }
+        player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
+        
     }
     public override void ExitState()
     {
