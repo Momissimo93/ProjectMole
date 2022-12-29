@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-
 public class Player : MonoBehaviour
 {
     [SerializeField]
@@ -12,13 +11,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     public LayerMask groundLayerMask;
     [SerializeField]
-    public Animator animator;
-    [SerializeField]
     public float jumpMultiplier;
     [SerializeField] 
     public float fallMultiplier;
     [SerializeField]
     public Transform attackPoint;
+    [SerializeField]
+    public PickAxe pickAxe;
+
+    public Animator animator;
     public Feet feet { get; private set; }
     public PlayerInputHandler playerInputHandler { get; set; }
     public Rigidbody rb { get; private set; }
@@ -41,22 +42,25 @@ public class Player : MonoBehaviour
     public AttackDelegate attackDelegate;
 
     public NormalizedInput normalizedInput;
+    public bool facingRight;
+    [SerializeField]
+    public bool isPointingUp;
 
     private void Awake()
     {
-        normalizedInput = new NormalizedInput(true, this);
-
+        animator = gameObject.GetComponent<Animator>();
         rb = gameObject.GetComponent<Rigidbody>();
         capsuleCollider = gameObject.GetComponent<CapsuleCollider>();
         playerInputHandler = gameObject.GetComponent<PlayerInputHandler>();
         feet = gameObject.GetComponentInChildren<Feet>();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        //direction.onValueChanged.AddListener(() => RotatePlayer() );
-
+        isPointingUp = false;
+        normalizedInput = new NormalizedInput();
+        normalizedInput.onValueChanged.AddListener((x) => Flip(x));
+        facingRight = true;
         vectorGravity = new Vector3(0, -Physics.gravity.y, 0);
         canAttack = true;
         canRepair = true;
@@ -70,7 +74,6 @@ public class Player : MonoBehaviour
         currentState = nextState;
         currentState?.EnterState();
     }
-
     private void FixedUpdate()
     {
         currentState.FixedUpdateState();
@@ -134,7 +137,6 @@ public class Player : MonoBehaviour
             }
             canAttack = false;
             canRepair = false;
-            Debug.Log("Repair");
             actionCoroutine = RepairCoroutine(1f);
             StartCoroutine(actionCoroutine);
         }
@@ -160,6 +162,36 @@ public class Player : MonoBehaviour
         canRepair = true;
     }
 
+    public void Throw()
+    {
+        Transform t = Instantiate(pickAxe.transform, transform.position + Vector3.up, Quaternion.identity);
+        if(!isPointingUp)
+        {
+            if (facingRight)
+            {
+                t.gameObject.GetComponent<PickAxe>().SetDirection(Vector3.right);
+            }
+            else
+            {
+                t.gameObject.GetComponent<PickAxe>().SetDirection(-Vector3.right);
+            }
+        }
+        else
+        {
+            t.gameObject.GetComponent<PickAxe>().SetDirection(Vector3.up);
+        }
+
+        //if (canAttack)
+        //{
+        //    if (animator != null)
+        //    {
+        //        animator.SetTrigger("attack");
+        //    }
+        //    canAttack = false;
+        //    canRepair = false;
+        //}
+    }
+
     public void CanJump() => canJump = true;
     private void OnDrawGizmos()
     {
@@ -168,51 +200,36 @@ public class Player : MonoBehaviour
             Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
     }
-}
-public class NormalizedInput
-{
-    private Player player;
-
-    private int normalizedValue;
-    public int NormalizedValue
-    {
-        get
-        {
-            return this.normalizedValue;
-        }
-        set
-        {
-            this.normalizedValue = value;
-            onValueChanged?.Invoke(normalizedValue);
-        }
-    }
-    public bool facingRight;
-    public DirectionEvent onValueChanged = new DirectionEvent();
-
-    public NormalizedInput(bool isFacingRight, Player player)
-    {
-        onValueChanged.AddListener(x => Flip(x));
-        normalizedValue = 0;
-        facingRight = isFacingRight;
-        this.player = player;
-    }
-
     public void Flip(int x)
     {
         if (x < 0 && facingRight)
         {
             facingRight = !facingRight;
-            RotatePlayer();
+            transform.Rotate(0f, 180f, 0f);
         }
         else if (x > 0 && !facingRight)
         {
             facingRight = !facingRight;
-            RotatePlayer();
+            transform.Rotate(0f, 180f, 0f);
         }
     }
-    public void RotatePlayer()
+}
+public class NormalizedInput
+{
+    private int normalizedValue;
+    public int NormalizedValue
     {
-        player.transform.Rotate(0f, 180f, 0f);
+        get => normalizedValue; 
+        set
+        {
+            Set(value);
+        }
+    }
+    public DirectionEvent onValueChanged = new DirectionEvent();
+    private protected void Set(int value)
+    {
+        this.normalizedValue = value;
+        onValueChanged?.Invoke(normalizedValue);
     }
 }
 public class DirectionEvent : UnityEvent <int> { }

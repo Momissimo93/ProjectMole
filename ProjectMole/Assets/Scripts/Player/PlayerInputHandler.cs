@@ -41,13 +41,16 @@ public class PlayerInputHandler : MonoBehaviour
         playerInputActions.Player.Repair.canceled += ctx => OnRepair(ctx);
 
         playerInputActions.Player.Pause.started += ctx => OnPause(ctx);
+
+        playerInputActions.Player.Throw.started += ctx => OnThrow(ctx);
+
+        playerInputActions.Player.PointUp.started += ctx => OnPointingUp(ctx);
+        playerInputActions.Player.PointUp.canceled += ctx => OnPointingUp(ctx);
     }
 
     public void OnMoveInput(InputAction.CallbackContext context)
     {
-
         rawMovementInput = context.ReadValue<Vector2>();
-        player.animator.SetFloat("speed", rawMovementInput.magnitude);
         player.normalizedInput.NormalizedValue = (int)(rawMovementInput * Vector2.right).normalized.x;
     }
 
@@ -79,5 +82,21 @@ public class PlayerInputHandler : MonoBehaviour
         CanvasManager.instance.PauseGame();
     }
 
+    public void OnPointingUp(InputAction.CallbackContext context)
+    {
+        if(context.started)
+        {
+            player.isPointingUp = true;
+        }
+        else if (context.canceled)
+        {
+            player.isPointingUp = false;
+        }
+    }
+
+    public void OnThrow(InputAction.CallbackContext context)
+    {
+        player.Throw();
+    }
     public void IsJumpPressed() => isJumpPressed = false;
 }

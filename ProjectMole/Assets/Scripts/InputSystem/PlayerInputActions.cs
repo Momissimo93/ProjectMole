@@ -71,6 +71,24 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Throw"",
+                    ""type"": ""Button"",
+                    ""id"": ""b93fef81-0ecf-4df8-b0bf-769aa763e30d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PointUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""443c29aa-3390-4c0e-8392-b6aa12afc1e1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -150,6 +168,28 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc4ce343-b591-4d34-9299-6a38e556b9f9"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f4686b33-41d2-44da-91a9-39fc6f32f004"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PointUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -163,6 +203,8 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Repair = m_Player.FindAction("Repair", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
+        m_Player_PointUp = m_Player.FindAction("PointUp", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -227,6 +269,8 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Repair;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_Throw;
+    private readonly InputAction m_Player_PointUp;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -236,6 +280,8 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Repair => m_Wrapper.m_Player_Repair;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @Throw => m_Wrapper.m_Player_Throw;
+        public InputAction @PointUp => m_Wrapper.m_Player_PointUp;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -260,6 +306,12 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Pause.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Throw.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrow;
+                @Throw.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrow;
+                @Throw.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnThrow;
+                @PointUp.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPointUp;
+                @PointUp.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPointUp;
+                @PointUp.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPointUp;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -279,6 +331,12 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Throw.started += instance.OnThrow;
+                @Throw.performed += instance.OnThrow;
+                @Throw.canceled += instance.OnThrow;
+                @PointUp.started += instance.OnPointUp;
+                @PointUp.performed += instance.OnPointUp;
+                @PointUp.canceled += instance.OnPointUp;
             }
         }
     }
@@ -290,5 +348,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnRepair(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnThrow(InputAction.CallbackContext context);
+        void OnPointUp(InputAction.CallbackContext context);
     }
 }

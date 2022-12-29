@@ -15,6 +15,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void UpdateState()
     {
+        player.animator.SetFloat("speed", player.playerInputHandler.rawMovementInput.magnitude);
         if (player.normalizedInput.NormalizedValue == 0)
         {
             player.ChangeState(new PlayerIdleState(player));

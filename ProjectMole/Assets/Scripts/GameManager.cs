@@ -148,7 +148,6 @@ public class GameManager : MonoBehaviour
     {
         CanvasManager.instance.GameOver();
     }
-
     public void NewJob(Job job)
     {
         switch (job.typeOfJobs)
@@ -161,7 +160,6 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
     public void DestroyBeam()
     {
         Randomizer.Shuffle(beams);
@@ -175,7 +173,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     public void GenerateHole()
     {
         Randomizer.Shuffle(rooms);
@@ -215,7 +212,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     void CreateDaysDictionary()
     {
         daysDictionary = new Dictionary<DayNumber, Day>();
@@ -256,7 +252,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     bool IsJobDone(RoomsManager[] rooms, Beam[] beams)
     {
         for (int i = 0; i < beams.Length; i++)
