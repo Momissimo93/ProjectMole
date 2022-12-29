@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static GameManger;
 
 public class Timer : MonoBehaviour
 {
-
     [SerializeField] bool debugMode;
 
     private float timer;
@@ -15,7 +13,7 @@ public class Timer : MonoBehaviour
     private bool startCountDown;
     private Queue<Job> jobsQueue;
 
-    public delegate void CountDownFinishd(GameManger.GameState gameState);
+    public delegate void CountDownFinishd(GameManager.GameState gameState);
     public CountDownFinishd countDownFinish;
 
     public static Timer instance;
@@ -39,7 +37,7 @@ public class Timer : MonoBehaviour
                     {
                         Debug.Log("Fire jobs at " + jobsQueue.Peek().timeInSeconds);
                     }
-                    GameManger.instance.NewJob(jobsQueue.Dequeue());
+                    GameManager.instance.NewJob(jobsQueue.Dequeue());
                 }
 
                 timer -= Time.deltaTime;
@@ -48,7 +46,7 @@ public class Timer : MonoBehaviour
             else
             {
                 HUDManager.instance.UpdateTimerUI(00f, 00f);
-                countDownFinish?.Invoke(GameManger.GameState.EndLevel);
+                countDownFinish?.Invoke(GameManager.GameState.EndLevel);
             }
         }
     }

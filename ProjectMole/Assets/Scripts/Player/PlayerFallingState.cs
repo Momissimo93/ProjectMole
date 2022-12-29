@@ -26,11 +26,11 @@ public class PlayerFallingState : PlayerBaseState
             {
                 player.animator.SetBool("landing", true);
             }
-            if (player.playerInputHandler.normalizedInput != 0)
+            if (player.normalizedInput.NormalizedValue != 0)
             {
                 player.ChangeState(new PlayerMoveState(player));
             }
-            else if (player.playerInputHandler.normalizedInput == 0)
+            else if (player.normalizedInput.NormalizedValue == 0)
             {
                 player.ChangeState(new PlayerIdleState(player));
             }
@@ -43,7 +43,7 @@ public class PlayerFallingState : PlayerBaseState
     }
     private void HandleMoveInput()
     {
-        player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
+        player.rb.velocity = new Vector3(player.normalizedInput.NormalizedValue * player.speed * Time.fixedDeltaTime, player.rb.velocity.y);
         
     }
     public override void ExitState()

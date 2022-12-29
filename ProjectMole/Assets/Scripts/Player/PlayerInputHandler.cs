@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using static UnityEngine.UI.Toggle;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -11,11 +15,11 @@ public class PlayerInputHandler : MonoBehaviour
     private Player player;
 
     public Vector2 rawMovementInput { get; private set; }
-    public int normalizedInput;
+    //public int normalizedInput;
     public bool canJump = true;
     public bool isJumpPressed;
     void Start()
-    {
+    {       
         playerInputActions = new PlayerInputActions();
         player = gameObject.GetComponent<Player>();
         playerInputActions.Enable();
@@ -44,45 +48,11 @@ public class PlayerInputHandler : MonoBehaviour
 
         rawMovementInput = context.ReadValue<Vector2>();
         player.animator.SetFloat("speed", rawMovementInput.magnitude);
-
-        normalizedInput = (int)(rawMovementInput * Vector2.right).normalized.x;
-
-
-        if(rawMovementInput.x < 0 && player.facingRight)
-        {
-            flip();
-        }
-        else if(rawMovementInput.x > 0 && !player.facingRight)
-        {
-            flip();
-        }
-        //if (context.started)
-        //{
-
-        //    rawMovementInput = context.ReadValue<Vector2>();
-        //}
-        //else if (context.performed)
-        //{
-
-        //    rawMovementInput = context.ReadValue<Vector2>();
-
-        //}
-        //else if (context.canceled)
-        //{
-        //    rawMovementInput = context.ReadValue<Vector2>();
-        //}
+        player.normalizedInput.NormalizedValue = (int)(rawMovementInput * Vector2.right).normalized.x;
     }
 
     public void OnJumpInput(InputAction.CallbackContext context)
     {
-        //if(player.feet.isOnGround)
-        //{
-        //    if (context.started)
-        //    {
-        //        isJumpPressed = true;
-        //        canJump = false;
-        //    }
-        //}
 
         if(context.started)
         {
@@ -106,13 +76,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     public void OnPause(InputAction.CallbackContext context)
     {
-        CanvasMnager.instance.PauseGame();
+        CanvasManager.instance.PauseGame();
     }
 
-    public void flip()
-    {
-        player.facingRight = !player.facingRight;
-        player.transform.Rotate(0f, 180f, 0f);
-    }
     public void IsJumpPressed() => isJumpPressed = false;
 }

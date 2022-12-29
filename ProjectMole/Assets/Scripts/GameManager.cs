@@ -1,21 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
-using static GameManger;
 
-public class GameManger : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private bool DebugMode;
-    //private Transform[] beams;
     [SerializeField]
-    private List <DaySO> daySOs;
+    private List<DaySO> daySOs;
     [SerializeField]
-    private Dictionary<DayNumber, Day> daysDictionary;
+    private Dictionary <DayNumber, Day> daysDictionary;
     [SerializeField]
     private Timer timer;
     [SerializeField]
@@ -26,13 +21,12 @@ public class GameManger : MonoBehaviour
     private GameState oldState;
     private GameState actualState;
     private int level;
-    private float lightAmount; //you can loose before the end of the countdown if the light amout is biggern than.... 
 
-    public enum GameState { Intro, SetDifficulty, SetBeams, SetHoles, LevelSetUp, Play, EndLevel, GameOver }
-    public enum DayNumber { DayOne, DayTwo, DayThree, DayFour, DayFive, DaySix, DaySeven, DayEight, DayNine, DayTen }
-    public enum TypeOfJobs { FixingHole, FixingBeam }
+    public enum GameState {Intro, SetCurrentLevel, SetTimerEvents, LevelSetUp, Play, EndLevel, GameOver}
+    public enum DayNumber {DayOne, DayTwo, DayThree, DayFour, DayFive, DaySix, DaySeven, DayEight, DayNine, DayTen}
+    public enum TypeOfJobs {FixingHole, FixingBeam}
 
-    public static GameManger instance;
+    public static GameManager instance;
 
     [SerializeField] public Day currentDay;
 
@@ -48,12 +42,6 @@ public class GameManger : MonoBehaviour
         UpdateGameState(GameState.Intro);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void UpdateGameState(GameState newState)
     {
         oldState = actualState;
@@ -64,16 +52,16 @@ public class GameManger : MonoBehaviour
             Debug.Log($"{this.GetType().Name} - {MethodBase.GetCurrentMethod().Name}: GameStatus da {oldState} a {actualState} ");
         }
 
-        switch(newState)
+        switch (newState)
         {
             case GameState.Intro:
                 Intro();
                 break;
-            case GameState.SetDifficulty:
-                SetDifficulty();
+            case GameState.SetCurrentLevel:
+                SetCurrentLevel();
                 break;
-            case GameState.LevelSetUp:
-                LevelSetUp();
+            case GameState.SetTimerEvents:
+                SetTimerEvents();
                 break;
             case GameState.Play:
                 Play();
@@ -89,9 +77,9 @@ public class GameManger : MonoBehaviour
     void Intro()
     {
         level = 1;
-        UpdateGameState(GameState.SetDifficulty);
+        UpdateGameState(GameState.SetCurrentLevel);
     }
-    void SetDifficulty()
+    void SetCurrentLevel()
     {
         if (DebugMode)
         {
@@ -123,35 +111,32 @@ public class GameManger : MonoBehaviour
                     currentDay = daysDictionary[DayNumber.DayFour];
                 }
                 break;
-        } 
+        }
 
-        UpdateGameState(GameState.LevelSetUp);
+        UpdateGameState(GameState.SetTimerEvents);
     }
 
-    void LevelSetUp()
+    void SetTimerEvents()
     {
         Timer.instance.SetTimer(currentDay.dayDuration, currentDay.jobs);
-
         UpdateGameState(GameState.Play);
     }
 
     void Play()
     {
-        //Keep track of the timer, the holes 
         Timer.instance.StartCountDown();
         Timer.instance.countDownFinish += UpdateGameState;
-        
+
     }
     void EndLevel()
     {
         Timer.instance.countDownFinish -= UpdateGameState;
 
-        if(IsJobDone(rooms, beams))
+        if (IsJobDone(rooms, beams))
         {
             Reset();
             level++;
-            Debug.LogFormat("next day");
-            CanvasMnager.instance.JobDone();
+            CanvasManager.instance.JobDone();
         }
         else
         {
@@ -161,13 +146,12 @@ public class GameManger : MonoBehaviour
     }
     void GameOver()
     {
-        Debug.LogFormat("GameOver");
-        CanvasMnager.instance.GameOver();
+        CanvasManager.instance.GameOver();
     }
 
     public void NewJob(Job job)
     {
-        switch(job.typeOfJobs)
+        switch (job.typeOfJobs)
         {
             case TypeOfJobs.FixingBeam:
                 DestroyBeam();
@@ -198,7 +182,7 @@ public class GameManger : MonoBehaviour
 
         if (!rooms[0].IsThereAnHoleInThisRoom())
         {
-            if(DebugMode)
+            if (DebugMode)
             {
                 Debug.Log("First try: There is no hole in this room " + rooms[0].transform.name);
             }
@@ -229,7 +213,6 @@ public class GameManger : MonoBehaviour
             {
                 Debug.Log("Forth try: all rooms have an holes ");
             }
-            //rooms[0].GenerateHole();
         }
     }
 
@@ -245,7 +228,7 @@ public class GameManger : MonoBehaviour
             day.jobs = daySO.jobs;
             day.dayDuration = daySO.dayDuration;
             daysDictionary.Add(day.dayName, day);
-            
+
             if (DebugMode)
             {
                 Debug.Log($"{MethodBase.GetCurrentMethod().Name}: add {day.dayName} a {daysDictionary} ");
@@ -274,7 +257,7 @@ public class GameManger : MonoBehaviour
         }
     }
 
-    bool IsJobDone(RoomsManager [] rooms, Beam[] beams)
+    bool IsJobDone(RoomsManager[] rooms, Beam[] beams)
     {
         for (int i = 0; i < beams.Length; i++)
         {
@@ -304,11 +287,11 @@ public class GameManger : MonoBehaviour
     }
     void Reset()
     {
-        for(int i = 0; i < rooms.Length; i ++)
+        for (int i = 0; i < rooms.Length; i++)
         {
             rooms[i].Reset();
         }
-        for(int i = 0; i < beams.Length; i ++)
+        for (int i = 0; i < beams.Length; i++)
         {
             beams[i].Reset();
         }
@@ -319,10 +302,10 @@ public class GameManger : MonoBehaviour
 public struct Day
 {
     [SerializeField]
-    public GameManger.DayNumber dayName { get; set; }
+    public GameManager.DayNumber dayName { get; set; }
 
     [SerializeField]
-    public Job [] jobs;
+    public Job[] jobs;
 
     [SerializeField]
     public float delta { get; set; }
@@ -331,7 +314,6 @@ public struct Day
     public float dayDuration { get; set; }
 
 }
-
 public class Randomizer
 {
     public static void Shuffle<T>(T[] items)
@@ -350,10 +332,11 @@ public class Randomizer
 [Serializable]
 public class Job
 {
-    public GameManger.TypeOfJobs typeOfJobs;
+    public GameManager.TypeOfJobs typeOfJobs;
 
     public float timeInSeconds;
 
     [HideInInspector]
     public Transform eventPosition { get; set; }
 }
+

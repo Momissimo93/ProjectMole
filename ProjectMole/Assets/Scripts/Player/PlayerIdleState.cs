@@ -14,7 +14,7 @@ public class PlayerIdleState : PlayerBaseState
     }
     public override void UpdateState()
     {
-        if (player.playerInputHandler.normalizedInput != 0)
+        if (player.normalizedInput.NormalizedValue != 0)
         {
             player.ChangeState(new PlayerMoveState(player));
         }

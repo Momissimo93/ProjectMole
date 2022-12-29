@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
+using UnityEngine.Events;
+
 
 public class Player : MonoBehaviour
 {
@@ -28,8 +27,6 @@ public class Player : MonoBehaviour
     public bool canRepair { get; set; }
     public Vector3 vectorGravity { get; private set; }
 
-    public bool facingRight = true;
-
     [SerializeField]
     private float attackRadius;
     [SerializeField]
@@ -37,15 +34,18 @@ public class Player : MonoBehaviour
 
     private CapsuleCollider capsuleCollider;
     private PlayerBaseState currentState;
-    private Vector2 currentMoveInput;
     private bool drawAttackingSphere;
     private IEnumerator actionCoroutine;
 
     public delegate void AttackDelegate();
     public AttackDelegate attackDelegate;
 
+    public NormalizedInput normalizedInput;
+
     private void Awake()
     {
+        normalizedInput = new NormalizedInput(true, this);
+
         rb = gameObject.GetComponent<Rigidbody>();
         capsuleCollider = gameObject.GetComponent<CapsuleCollider>();
         playerInputHandler = gameObject.GetComponent<PlayerInputHandler>();
@@ -55,6 +55,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //direction.onValueChanged.AddListener(() => RotatePlayer() );
+
         vectorGravity = new Vector3(0, -Physics.gravity.y, 0);
         canAttack = true;
         canRepair = true;
@@ -167,3 +169,50 @@ public class Player : MonoBehaviour
         }
     }
 }
+public class NormalizedInput
+{
+    private Player player;
+
+    private int normalizedValue;
+    public int NormalizedValue
+    {
+        get
+        {
+            return this.normalizedValue;
+        }
+        set
+        {
+            this.normalizedValue = value;
+            onValueChanged?.Invoke(normalizedValue);
+        }
+    }
+    public bool facingRight;
+    public DirectionEvent onValueChanged = new DirectionEvent();
+
+    public NormalizedInput(bool isFacingRight, Player player)
+    {
+        onValueChanged.AddListener(x => Flip(x));
+        normalizedValue = 0;
+        facingRight = isFacingRight;
+        this.player = player;
+    }
+
+    public void Flip(int x)
+    {
+        if (x < 0 && facingRight)
+        {
+            facingRight = !facingRight;
+            RotatePlayer();
+        }
+        else if (x > 0 && !facingRight)
+        {
+            facingRight = !facingRight;
+            RotatePlayer();
+        }
+    }
+    public void RotatePlayer()
+    {
+        player.transform.Rotate(0f, 180f, 0f);
+    }
+}
+public class DirectionEvent : UnityEvent <int> { }

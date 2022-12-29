@@ -32,7 +32,7 @@ public class PlayerJumpState : PlayerBaseState
     }
     private void HandleMoveInput()
     {
-        player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.fixedDeltaTime, player.rb.velocity.y); //this was previosuly used
+        player.rb.velocity = new Vector3(player.normalizedInput.NormalizedValue * player.speed * Time.fixedDeltaTime, player.rb.velocity.y); //this was previosuly used
     }
     public override void ExitState()
     {

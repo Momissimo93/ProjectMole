@@ -15,7 +15,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void UpdateState()
     {
-        if (player.playerInputHandler.normalizedInput == 0)
+        if (player.normalizedInput.NormalizedValue == 0)
         {
             player.ChangeState(new PlayerIdleState(player));
         }
@@ -31,6 +31,6 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void FixedUpdateState()
     {
-        player.rb.velocity = new Vector3(player.playerInputHandler.normalizedInput * player.speed * Time.deltaTime, player.rb.velocity.y);
+        player.rb.velocity = new Vector3(player.normalizedInput.NormalizedValue * player.speed * Time.deltaTime, player.rb.velocity.y);
     }
 }

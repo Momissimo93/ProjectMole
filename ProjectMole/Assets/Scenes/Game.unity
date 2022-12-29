@@ -5987,7 +5987,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 678843539}
-  - component: {fileID: 678843540}
+  - component: {fileID: 678843541}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -6013,7 +6013,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &678843540
+--- !u!114 &678843541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6022,7 +6022,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 678843538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2440614a43772148a1f214f57c68a67, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c23818653923c04e8423b94d808f9fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   GameOverCanvas: {fileID: 6325212283743223162}
@@ -7888,7 +7888,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1066598642}
-  - component: {fileID: 1066598641}
+  - component: {fileID: 1066598643}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -7896,34 +7896,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1066598641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1066598640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a806868502eb644f853f09c2afcf321, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMode: 1
-  daySOs:
-  - {fileID: 11400000, guid: 585bf941630f6e24bb9abd346de517c6, type: 2}
-  - {fileID: 11400000, guid: fbb627b5c109a3a468ae9d5f7f7db8c5, type: 2}
-  timer: {fileID: 855164331}
-  rooms:
-  - {fileID: 2135622304}
-  - {fileID: 697894246}
-  - {fileID: 1801186268}
-  beams:
-  - {fileID: 960605151}
-  - {fileID: 1891762719}
-  - {fileID: 1759961821}
-  - {fileID: 1766668456}
-  currentDay:
-    jobs: []
 --- !u!4 &1066598642
 Transform:
   m_ObjectHideFlags: 0
@@ -7939,6 +7911,33 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1066598643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1066598640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e4617644bd88554ba333dac33229531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugMode: 0
+  daySOs:
+  - {fileID: 11400000, guid: 585bf941630f6e24bb9abd346de517c6, type: 2}
+  timer: {fileID: 855164331}
+  rooms:
+  - {fileID: 2135622304}
+  - {fileID: 697894246}
+  - {fileID: 1801186268}
+  beams:
+  - {fileID: 960605151}
+  - {fileID: 1891762719}
+  - {fileID: 1759961821}
+  - {fileID: 1766668456}
+  currentDay:
+    jobs: []
 --- !u!1001 &1087340016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15387,7 +15386,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     - target: {fileID: 6464447034326982457, guid: c51e241c853ac3e468e7e110796da6c1,
         type: 3}
       propertyPath: m_Pivot.x
@@ -15512,7 +15511,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c51e241c853ac3e468e7e110796da6c1, type: 3}
 --- !u!1 &1119946620631343997
@@ -15783,7 +15782,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     - target: {fileID: 8766500935543926691, guid: 258ff1ff7415a6241865b5f22ff42288,
         type: 3}
       propertyPath: m_Pivot.x
@@ -15903,7 +15902,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 258ff1ff7415a6241865b5f22ff42288, type: 3}
 --- !u!4 &3648290305375234424
@@ -16194,12 +16193,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     - target: {fileID: 1503663482243275689, guid: 60a0ad7fec3989a48941d8fd8e719693,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 678843540}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60a0ad7fec3989a48941d8fd8e719693, type: 3}
 --- !u!1001 &4878957796046933379
@@ -16740,7 +16739,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df7b76866948ae4ca7dbccf8916f6f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalizedInput: 0
   canJump: 1
   isJumpPressed: 0
 --- !u!114 &7857285184911825149
@@ -16764,7 +16762,6 @@ MonoBehaviour:
   jumpMultiplier: -6
   fallMultiplier: 8
   attackPoint: {fileID: 101667881}
-  facingRight: 1
   attackRadius: 10
   targetLayer:
     serializedVersion: 2

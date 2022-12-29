@@ -52,7 +52,6 @@ public class Enemy : MonoBehaviour, IDamagable
     }
     private void Update()
     {
-        Debug.Log(transform.position.y);
         if(hit)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y + speed, transform.position.z);

@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static GameManger;
 
-public class CanvasMnager : MonoBehaviour
+public class CanvasManager : MonoBehaviour
 {
-    public static CanvasMnager instance;
+    public static CanvasManager instance;
 
     [SerializeField]
     GameObject GameOverCanvas;
@@ -31,7 +30,7 @@ public class CanvasMnager : MonoBehaviour
     public void OnNextDay()
     {
         JobDoneMenu.gameObject.SetActive(false);
-        GameManger.instance.UpdateGameState(GameState.SetDifficulty);
+        GameManager.instance.UpdateGameState(GameManager.GameState.SetCurrentLevel);
         Time.timeScale = 1f;
     }
     public void PauseGame()
