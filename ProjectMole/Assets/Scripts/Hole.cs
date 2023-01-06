@@ -89,11 +89,6 @@ public class Hole : MonoBehaviour, IFixable
         if (canBeFixed)
         {
             holeFixed?.Invoke();
-            Debug.Log("The hole is fixed fixed");
-        }
-        else
-        {
-            Debug.Log("The hole can not be fixed");
         }
     }
     public void ManualEnemyCleaning()

@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     private CapsuleCollider capsuleCollider;
     private PlayerBaseState currentState;
     private bool drawAttackingSphere;
+    private bool canThrow;
     private IEnumerator actionCoroutine;
 
     public delegate void AttackDelegate();
@@ -43,7 +44,6 @@ public class Player : MonoBehaviour
 
     public NormalizedInput normalizedInput;
     public bool facingRight;
-    [SerializeField]
     public bool isPointingUp;
 
     private void Awake()
@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
         vectorGravity = new Vector3(0, -Physics.gravity.y, 0);
         canAttack = true;
         canRepair = true;
+        canThrow = true;
         CanJump(); 
         ChangeState(new PlayerIdleState(this));
     }
@@ -164,8 +165,22 @@ public class Player : MonoBehaviour
 
     public void Throw()
     {
-        Transform t = Instantiate(pickAxe.transform, transform.position + Vector3.up, Quaternion.identity);
-        if(!isPointingUp)
+        if(canThrow)
+        {
+            canThrow = false;
+            if (animator != null)
+            {
+                animator.SetTrigger("throw");
+            }
+
+        }
+    }
+    public void ThrowPickAxeAnimationEvent()
+    {
+        Transform t = Instantiate(pickAxe.transform, attackPoint.transform.position, Quaternion.identity);
+        t.gameObject.GetComponent<PickAxe>().onAttackComplete.AddListener(() => canThrow = true);
+
+        if (!isPointingUp)
         {
             if (facingRight)
             {
@@ -180,16 +195,6 @@ public class Player : MonoBehaviour
         {
             t.gameObject.GetComponent<PickAxe>().SetDirection(Vector3.up);
         }
-
-        //if (canAttack)
-        //{
-        //    if (animator != null)
-        //    {
-        //        animator.SetTrigger("attack");
-        //    }
-        //    canAttack = false;
-        //    canRepair = false;
-        //}
     }
 
     public void CanJump() => canJump = true;

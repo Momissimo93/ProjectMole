@@ -22,13 +22,14 @@ public class GameManager : MonoBehaviour
     private GameState actualState;
     private int level;
 
-    public enum GameState {Intro, SetCurrentLevel, SetTimerEvents, LevelSetUp, Play, EndLevel, GameOver}
+    public Day currentDay;
+
+    public enum GameState {Intro, SetCurrentLevel, SetTimerEvents, LevelSetUp, Play, EndLevel, JobDone, GameOver }
     public enum DayNumber {DayOne, DayTwo, DayThree, DayFour, DayFive, DaySix, DaySeven, DayEight, DayNine, DayTen}
     public enum TypeOfJobs {FixingHole, FixingBeam}
 
     public static GameManager instance;
 
-    [SerializeField] public Day currentDay;
 
     private void Awake()
     {
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
         DeactivateMarkers();
         instance = this;
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         UpdateGameState(GameState.Intro);
@@ -68,6 +69,9 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EndLevel:
                 EndLevel();
+                break;
+            case GameState.JobDone:
+                JobDone();
                 break;
             case GameState.GameOver:
                 GameOver();
@@ -135,14 +139,18 @@ public class GameManager : MonoBehaviour
         if (IsJobDone(rooms, beams))
         {
             Reset();
-            level++;
-            CanvasManager.instance.JobDone();
+            UpdateGameState(GameState.JobDone);
         }
         else
         {
             Reset();
             UpdateGameState(GameState.GameOver);
         }
+    }
+    void JobDone()
+    {
+        level++;
+        CanvasManager.instance.JobDone();
     }
     void GameOver()
     {
@@ -278,6 +286,15 @@ public class GameManager : MonoBehaviour
             IMarkable c;
             g.TryGetComponent<IMarkable>(out c);
             c.ActivateMarker();
+        }
+    }
+    public void DeAtivateMarker(GameObject g)
+    {
+        if (g.GetComponent<Marker>())
+        {
+            IMarkable c;
+            g.TryGetComponent<IMarkable>(out c);
+            c.DeactivateMarker();
         }
     }
     void Reset()

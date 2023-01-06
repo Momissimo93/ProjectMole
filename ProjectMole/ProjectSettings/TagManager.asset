@@ -15,8 +15,8 @@ TagManager:
   - HUD
   - Enemy
   - Fixable
-  - 
-  - 
+  - Player
+  - Boundaries
   - 
   - 
   - 

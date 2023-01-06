@@ -16,6 +16,7 @@ public class Beam : MonoBehaviour, IFixable
         animator.SetTrigger("Fix");
         sphereCollider.enabled = false;
         isAnActiveHole = false;
+        GameManager.instance.DeAtivateMarker(this.gameObject);
     }
     public void Break()
     {

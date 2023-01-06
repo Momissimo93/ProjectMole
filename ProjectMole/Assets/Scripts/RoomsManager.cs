@@ -23,6 +23,7 @@ public class RoomsManager : MonoBehaviour
 
     public void Reset()
     {
+        GameManager.instance.DeAtivateMarker(this.gameObject);
         room.gameObject.SetActive(true);
         for(int i = 0; i < holes.Length; i++)
         {
