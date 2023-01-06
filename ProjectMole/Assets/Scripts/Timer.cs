@@ -8,8 +8,6 @@ public class Timer : MonoBehaviour
     [SerializeField] bool debugMode;
 
     private float timer;
-    private float waves;
-    private float breath;
     private bool startCountDown;
     private Queue<Job> jobsQueue;
 
@@ -58,7 +56,8 @@ public class Timer : MonoBehaviour
 
         Job temp;
 
-        for(int i = 0; i< tempJob.Length; i++)
+        //Ordering the jobs according to their timing 
+        for(int i = 0; i < tempJob.Length; i++)
         {
             for(int j = i+1; j < tempJob.Length;j++)
             {
@@ -70,13 +69,13 @@ public class Timer : MonoBehaviour
                 }
             }
         }
+
         jobsQueue = new Queue<Job>();
 
         for(int k = 0; k < tempJob.Length; k++)
         {
             jobsQueue.Enqueue(tempJob[k]);
         }
-
     }
 
     public void StartCountDown() => startCountDown = true;

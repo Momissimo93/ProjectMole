@@ -20,7 +20,7 @@ public class Hole : MonoBehaviour, IFixable
     private bool canBeFixed;
     private IEnumerator coroutine;
     private float counter = 3;
-    public bool isAnActiveHole { get; set; }
+    public bool isBroken { get; set; }
 
     public delegate void HoleFixed();
     public HoleFixed holeFixed;
@@ -99,5 +99,5 @@ public class Hole : MonoBehaviour, IFixable
         }
     }
 
-    public bool IsAnActiveHole () => isAnActiveHole;
+    public bool IsBroken() => isBroken;
 }

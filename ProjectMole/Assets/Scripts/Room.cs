@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomsManager : MonoBehaviour
+public class Room : MonoBehaviour
 {
     [SerializeField] GameObject room;
-    [SerializeField] Hole[] holes;
+    [SerializeField] Hole [] holes;
 
     private void Start()
     {
@@ -15,9 +15,9 @@ public class RoomsManager : MonoBehaviour
     public void GenerateHole()
     {
         room.SetActive(false);
-        int i = Random.Range(0,holes.Length);
+        int i = Random.Range(0, holes.Length);
         holes[i].gameObject.SetActive(true);
-        holes[i].isAnActiveHole = true;
+        holes[i].isBroken = true;
         holes[i].holeFixed += Reset;
     }
 
@@ -25,19 +25,20 @@ public class RoomsManager : MonoBehaviour
     {
         GameManager.instance.DeAtivateMarker(this.gameObject);
         room.gameObject.SetActive(true);
-        for(int i = 0; i < holes.Length; i++)
+
+        for (int i = 0; i < holes.Length; i++)
         {
             holes[i].ManualEnemyCleaning();
-            holes[i].isAnActiveHole = false;
+            holes[i].isBroken = false;
             holes[i].gameObject.SetActive(false);
             holes[i].holeFixed -= Reset;
         }
     }
-    public bool IsThereAnHoleInThisRoom()
+    public bool IsBroken()
     {
-        for(int i = 0; i < holes.Length; i++)
+        for (int i = 0; i < holes.Length; i++)
         {
-            if (holes[i].IsAnActiveHole())
+            if (holes[i].IsBroken())
             {
                 return true;
             }

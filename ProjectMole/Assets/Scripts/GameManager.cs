@@ -10,11 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private List<DaySO> daySOs;
     [SerializeField]
-    private Dictionary <DayNumber, Day> daysDictionary;
+    private Dictionary <int, Day> daysDictionary;
     [SerializeField]
     private Timer timer;
+
     [SerializeField]
-    private RoomsManager[] rooms;
+    private Room[] rooms;
     [SerializeField]
     private Beam[] beams;
 
@@ -25,11 +26,10 @@ public class GameManager : MonoBehaviour
     public Day currentDay;
 
     public enum GameState {Intro, SetCurrentLevel, SetTimerEvents, LevelSetUp, Play, EndLevel, JobDone, GameOver }
-    public enum DayNumber {DayOne, DayTwo, DayThree, DayFour, DayFive, DaySix, DaySeven, DayEight, DayNine, DayTen}
+
     public enum TypeOfJobs {FixingHole, FixingBeam}
 
     public static GameManager instance;
-
 
     private void Awake()
     {
@@ -89,32 +89,12 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("CurrentDay " + level);
         }
-        switch (level)
+
+        if (daysDictionary.ContainsKey(level))
         {
-            case 1:
-                if (daysDictionary.ContainsKey(DayNumber.DayOne))
-                {
-                    currentDay = daysDictionary[DayNumber.DayOne];
-                }
-                break;
-            case 2:
-                if (daysDictionary.ContainsKey(DayNumber.DayTwo))
-                {
-                    currentDay = daysDictionary[DayNumber.DayTwo];
-                }
-                break;
-            case 3:
-                if (daysDictionary.ContainsKey(DayNumber.DayThree))
-                {
-                    currentDay = daysDictionary[DayNumber.DayThree];
-                }
-                break;
-            case 4:
-                if (daysDictionary.ContainsKey(DayNumber.DayFour))
-                {
-                    currentDay = daysDictionary[DayNumber.DayFour];
-                }
-                break;
+            Day value;
+            daysDictionary.TryGetValue(level, out value);
+            currentDay = value;
         }
 
         UpdateGameState(GameState.SetTimerEvents);
@@ -130,7 +110,6 @@ public class GameManager : MonoBehaviour
     {
         Timer.instance.StartCountDown();
         Timer.instance.countDownFinish += UpdateGameState;
-
     }
     void EndLevel()
     {
@@ -173,7 +152,7 @@ public class GameManager : MonoBehaviour
         Randomizer.Shuffle(beams);
         for (int i = 0; i < beams.Length; i++)
         {
-            if (!beams[i].IsAnActiveHole())
+            if (!beams[i].IsBroken())
             {
                 beams[i].Break();
                 ActivateMarker(beams[i].gameObject);
@@ -185,7 +164,7 @@ public class GameManager : MonoBehaviour
     {
         Randomizer.Shuffle(rooms);
 
-        if (!rooms[0].IsThereAnHoleInThisRoom())
+        if (!rooms[0].IsBroken())
         {
             if (DebugMode)
             {
@@ -194,7 +173,7 @@ public class GameManager : MonoBehaviour
             rooms[0].GenerateHole();
             ActivateMarker(rooms[0].gameObject);
         }
-        else if (!rooms[1].IsThereAnHoleInThisRoom())
+        else if (!rooms[1].IsBroken())
         {
             if (DebugMode)
             {
@@ -203,7 +182,7 @@ public class GameManager : MonoBehaviour
             rooms[1].GenerateHole();
             ActivateMarker(rooms[0].gameObject);
         }
-        else if (!rooms[2].IsThereAnHoleInThisRoom())
+        else if (!rooms[2].IsBroken())
         {
             if (DebugMode)
             {
@@ -222,20 +201,21 @@ public class GameManager : MonoBehaviour
     }
     void CreateDaysDictionary()
     {
-        daysDictionary = new Dictionary<DayNumber, Day>();
+        daysDictionary = new Dictionary<int, Day>();
 
         foreach (DaySO daySO in daySOs)
         {
             Day day = new Day();
 
-            day.dayName = daySO.dayName;
+            day.dayNumber = daySO.dayNumber;
             day.jobs = daySO.jobs;
             day.dayDuration = daySO.dayDuration;
-            daysDictionary.Add(day.dayName, day);
+
+            daysDictionary.Add(day.dayNumber, day);
 
             if (DebugMode)
             {
-                Debug.Log($"{MethodBase.GetCurrentMethod().Name}: add {day.dayName} a {daysDictionary} ");
+                Debug.Log($"{MethodBase.GetCurrentMethod().Name}: add {day.dayNumber} a {daysDictionary} ");
             }
         }
     }
@@ -260,18 +240,19 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    bool IsJobDone(RoomsManager[] rooms, Beam[] beams)
+
+    bool IsJobDone(Room[] rooms, Beam[] beams)
     {
         for (int i = 0; i < beams.Length; i++)
         {
-            if (beams[i].IsAnActiveHole() == true)
+            if (beams[i].IsBroken() == true)
             {
                 return false;
             }
         }
         for (int i = 0; i < rooms.Length; i++)
         {
-            if (rooms[i].IsThereAnHoleInThisRoom() == true)
+            if (rooms[i].IsBroken() == true)
             {
                 return false;
             }
@@ -314,7 +295,7 @@ public class GameManager : MonoBehaviour
 public struct Day
 {
     [SerializeField]
-    public GameManager.DayNumber dayName { get; set; }
+    public int dayNumber;
 
     [SerializeField]
     public Job[] jobs;

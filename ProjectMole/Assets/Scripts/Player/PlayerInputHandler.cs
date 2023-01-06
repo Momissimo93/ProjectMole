@@ -46,6 +46,8 @@ public class PlayerInputHandler : MonoBehaviour
 
         playerInputActions.Player.PointUp.started += ctx => OnPointingUp(ctx);
         playerInputActions.Player.PointUp.canceled += ctx => OnPointingUp(ctx);
+
+        playerInputActions.Player.Click.started += ctx => OnThrow(ctx);
     }
 
     public void OnMoveInput(InputAction.CallbackContext context)

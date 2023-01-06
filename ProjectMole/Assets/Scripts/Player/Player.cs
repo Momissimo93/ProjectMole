@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     private bool drawAttackingSphere;
     private bool canThrow;
     private IEnumerator actionCoroutine;
+    private Vector3 direction;
 
     public delegate void AttackDelegate();
     public AttackDelegate attackDelegate;
@@ -46,6 +47,8 @@ public class Player : MonoBehaviour
     public bool facingRight;
     public bool isPointingUp;
 
+    public static Player instance;
+
     private void Awake()
     {
         animator = gameObject.GetComponent<Animator>();
@@ -53,6 +56,8 @@ public class Player : MonoBehaviour
         capsuleCollider = gameObject.GetComponent<CapsuleCollider>();
         playerInputHandler = gameObject.GetComponent<PlayerInputHandler>();
         feet = gameObject.GetComponentInChildren<Feet>();
+
+        instance = this;
     }
 
     void Start()
@@ -162,39 +167,42 @@ public class Player : MonoBehaviour
         canAttack = true;
         canRepair = true;
     }
-
     public void Throw()
     {
         if(canThrow)
         {
+            direction = Pointer.instance.Direction();
             canThrow = false;
             if (animator != null)
             {
                 animator.SetTrigger("throw");
             }
-
         }
     }
     public void ThrowPickAxeAnimationEvent()
     {
-        Transform t = Instantiate(pickAxe.transform, attackPoint.transform.position, Quaternion.identity);
-        t.gameObject.GetComponent<PickAxe>().onAttackComplete.AddListener(() => canThrow = true);
 
-        if (!isPointingUp)
-        {
-            if (facingRight)
-            {
-                t.gameObject.GetComponent<PickAxe>().SetDirection(Vector3.right);
-            }
-            else
-            {
-                t.gameObject.GetComponent<PickAxe>().SetDirection(-Vector3.right);
-            }
-        }
-        else
-        {
-            t.gameObject.GetComponent<PickAxe>().SetDirection(Vector3.up);
-        }
+        Transform t = Instantiate(pickAxe.transform, attackPoint.transform.position, Quaternion.identity);
+        PickAxe axe = t.gameObject.GetComponent<PickAxe>();
+
+        axe.onAttackComplete.AddListener(() => canThrow = true);
+        axe.SetDirection(direction);
+
+        //if (!isPointingUp)
+        //{
+        //    if (facingRight)
+        //    {
+        //        axe.SetDirection(Vector3.right);
+        //    }
+        //    else
+        //    {
+        //        axe.SetDirection(-Vector3.right);
+        //    }
+        //}
+        //else
+        //{
+        //    axe.SetDirection(Vector3.up);
+        //}
     }
 
     public void CanJump() => canJump = true;
@@ -230,6 +238,7 @@ public class NormalizedInput
             Set(value);
         }
     }
+
     public DirectionEvent onValueChanged = new DirectionEvent();
     private protected void Set(int value)
     {

@@ -8,7 +8,8 @@ using UnityEngine;
 public class DaySO : ScriptableObject
 {
     [field: SerializeField]
-    public GameManager.DayNumber dayName { get; set; }
+
+    public int dayNumber;
 
     [field: SerializeField]
     public float dayDuration { get; set; }

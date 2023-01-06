@@ -33,5 +33,5 @@ public class Beam : MonoBehaviour, IFixable
             isAnActiveHole = false;
         }
     }
-    public bool IsAnActiveHole() => isAnActiveHole;
+    public bool IsBroken() => isAnActiveHole;
 }
