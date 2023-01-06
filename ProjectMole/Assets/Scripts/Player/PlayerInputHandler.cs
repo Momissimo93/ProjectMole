@@ -18,6 +18,13 @@ public class PlayerInputHandler : MonoBehaviour
     //public int normalizedInput;
     public bool canJump = true;
     public bool isJumpPressed;
+
+    public static PlayerInputHandler instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {       
         playerInputActions = new PlayerInputActions();

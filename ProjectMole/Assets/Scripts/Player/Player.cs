@@ -171,6 +171,7 @@ public class Player : MonoBehaviour
     {
         if(canThrow)
         {
+            Flip(Pointer.instance.direction);
             direction = Pointer.instance.Direction();
             canThrow = false;
             if (animator != null)
@@ -181,7 +182,7 @@ public class Player : MonoBehaviour
     }
     public void ThrowPickAxeAnimationEvent()
     {
-
+        normalizedInput.NormalizedValue = (int)(PlayerInputHandler.instance.rawMovementInput * Vector2.right).normalized.x;
         Transform t = Instantiate(pickAxe.transform, attackPoint.transform.position, Quaternion.identity);
         PickAxe axe = t.gameObject.GetComponent<PickAxe>();
 

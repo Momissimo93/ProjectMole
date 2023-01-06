@@ -8,8 +8,8 @@ public class Pointer : MonoBehaviour
     private Camera mainCamera;
     private Vector3 target;
     private Vector3 difference;
-
     private NormalizedInput normalizedInput;
+    public int direction;
 
     public static Pointer instance;
 
@@ -33,15 +33,13 @@ public class Pointer : MonoBehaviour
 
         float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
    
-        if(rotationZ >= -90 && rotationZ <= 90)
+        if(rotationZ > -90 && rotationZ < 90)
         {
-            Debug.Log("facing right");
-            Player.instance.Flip(1);
+            direction = 1;
         }
         else
         {
-            Debug.Log("facing left");
-            Player.instance.Flip(-1);
+            direction = -1;
         }
         
     }
